@@ -15,6 +15,7 @@ namespace TranslationFileEditor
     public partial class Form1 : Form
     {
         private Dictionary<string, Dictionary<string, string>> TranslationsData = new Dictionary<string, Dictionary<string, string>>();
+        private Dictionary<string, TextBox> TextBoxes = new Dictionary<string, TextBox>();
         string MainFile = null;
 
         public Form1()
@@ -40,7 +41,7 @@ namespace TranslationFileEditor
 
                 foreach (string file in files)
                 {
-                    JObject obj = JObject.Parse(File.ReadAllText(directory + "/" + files.First()));
+                    JObject obj = JObject.Parse(File.ReadAllText(directory + "/" + file));
                     Dictionary<string, string> translations = new Dictionary<string, string>();
 
                     foreach (KeyValuePair<string, JToken> item in obj)
@@ -54,31 +55,18 @@ namespace TranslationFileEditor
                 MainFile = files.First();
                 lbKeys.DataSource = TranslationsData[MainFile].Keys.OrderBy(x => x).ToList();
                 lbKeys.Enabled = true;
+
+                InitTextBoxes();
+                UpdateTextBoxValues(lbKeys.SelectedValue.ToString());
             }
         }
 
-        private void lbKeys_SelectedIndexChanged(object sender, EventArgs e)
+        private void InitTextBoxes()
         {
             tlpTranslations.RowCount = TranslationsData.Count;
 
-            GroupBox defaultGroup = new GroupBox()
-            {
-                Text = MainFile,
-                Dock = DockStyle.Fill,
-                MaximumSize = new Size(0, 100)
-            };
-
-            defaultGroup.Controls.Add(new TextBox()
-            {
-                Text = TranslationsData[MainFile][lbKeys.SelectedValue.ToString()],
-                Top = 20,
-                Left = 20,
-                Width = 200
-            });
-            
-            tlpTranslations.Controls.Add(defaultGroup, 0, 0);
-
-            foreach(string file in TranslationsData.Keys.Where(x => x != MainFile))
+            int rowIndex = 0;
+            foreach (string file in TranslationsData.Keys.OrderByDescending(x => x == MainFile))
             {
                 GroupBox group = new GroupBox()
                 {
@@ -87,15 +75,33 @@ namespace TranslationFileEditor
                     MaximumSize = new Size(0, 100)
                 };
 
-                group.Controls.Add(new TextBox()
+                TextBox textbox = new TextBox()
                 {
-                    Text = TranslationsData[file][lbKeys.SelectedValue.ToString()],
                     Top = 20,
                     Left = 20,
-                    Width = 200
-                });
+                    Width = 200,
+                    Dock = DockStyle.Fill,
+                    Multiline = true,
+                };
 
-                tlpTranslations.Controls.Add(group, 0, 1);
+                group.Controls.Add(textbox);
+                TextBoxes[file] = textbox;
+
+                tlpTranslations.Controls.Add(group, 0, rowIndex);
+                rowIndex++;
+            }
+        }
+
+        private void lbKeys_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateTextBoxValues(lbKeys.SelectedValue.ToString());
+        }
+
+        private void UpdateTextBoxValues(string key)
+        {
+            foreach (KeyValuePair<string, TextBox> pair in TextBoxes)
+            {
+                pair.Value.Text = TranslationsData[pair.Key][key];
             }
         }
     }
