@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +17,7 @@ namespace TranslationFileEditor
     {
         private Dictionary<string, Dictionary<string, string>> TranslationsData = new Dictionary<string, Dictionary<string, string>>();
         private Dictionary<string, TextBox> TextBoxes = new Dictionary<string, TextBox>();
+        private string OpenedFolder = null;
         string MainFile = null;
 
         public Form1()
@@ -33,6 +35,9 @@ namespace TranslationFileEditor
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
                 string directory = folderBrowserDialog1.SelectedPath;
+
+                OpenedFolder = directory;
+                btnSaveChanges.Enabled = true;
 
                 IEnumerable<string> files = Directory.EnumerateFiles(directory, "*.json").Select(x => Path.GetFileName(x));
 
@@ -82,7 +87,10 @@ namespace TranslationFileEditor
                     Width = 200,
                     Dock = DockStyle.Fill,
                     Multiline = true,
+                    Name = Guid.NewGuid().ToString()
                 };
+
+                textbox.TextChanged += Textbox_TextChanged;
 
                 group.Controls.Add(textbox);
                 TextBoxes[file] = textbox;
@@ -90,6 +98,14 @@ namespace TranslationFileEditor
                 tlpTranslations.Controls.Add(group, 0, rowIndex);
                 rowIndex++;
             }
+        }
+
+        private void Textbox_TextChanged(object sender, EventArgs e)
+        {
+            TextBox textbox = sender as TextBox;
+            string file = TextBoxes.First(x => x.Value.Name == textbox.Name).Key;
+
+            TranslationsData[file][lbKeys.SelectedValue.ToString()] = textbox.Text;
         }
 
         private void lbKeys_SelectedIndexChanged(object sender, EventArgs e)
@@ -102,6 +118,14 @@ namespace TranslationFileEditor
             foreach (KeyValuePair<string, TextBox> pair in TextBoxes)
             {
                 pair.Value.Text = TranslationsData[pair.Key][key];
+            }
+        }
+
+        private void btnSaveChanges_Click(object sender, EventArgs e)
+        {
+            foreach (KeyValuePair<string, Dictionary<string, string>> file in TranslationsData)
+            {
+                File.WriteAllText($"{OpenedFolder}/{file.Key}", JsonConvert.SerializeObject(file.Value, Formatting.Indented));
             }
         }
     }
