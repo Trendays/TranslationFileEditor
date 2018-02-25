@@ -23,6 +23,8 @@ namespace TranslationFileEditor
         public Form1()
         {
             InitializeComponent();
+
+            lblStatus.Text = string.Empty;
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -106,6 +108,8 @@ namespace TranslationFileEditor
             string file = TextBoxes.First(x => x.Value.Name == textbox.Name).Key;
 
             TranslationsData[file][lbKeys.SelectedValue.ToString()] = textbox.Text;
+
+            lblStatus.Text = "You have unsaved changes";
         }
 
         private void lbKeys_SelectedIndexChanged(object sender, EventArgs e)
@@ -123,10 +127,14 @@ namespace TranslationFileEditor
 
         private void btnSaveChanges_Click(object sender, EventArgs e)
         {
+            lblStatus.Text = "Saving...";
+
             foreach (KeyValuePair<string, Dictionary<string, string>> file in TranslationsData)
             {
                 File.WriteAllText($"{OpenedFolder}/{file.Key}", JsonConvert.SerializeObject(file.Value, Formatting.Indented));
             }
+
+            lblStatus.Text = "Saved";
         }
     }
 }
