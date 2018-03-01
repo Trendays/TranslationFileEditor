@@ -142,5 +142,11 @@ namespace TranslationFileEditor
 
             lblStatus.Text = "Saved";
         }
+
+        private void btnGithubProject_Click(object sender, EventArgs e)
+        {
+            const string githubProjectUrl = "https://github.com/Trendays/TranslationFileEditor";
+            System.Diagnostics.Process.Start(githubProjectUrl);
+        }
     }
 }
