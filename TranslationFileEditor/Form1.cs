@@ -20,6 +20,8 @@ namespace TranslationFileEditor
         private string OpenedFolder = null;
         string MainFile = null;
 
+        bool JustChangedKey = false;
+
         public Form1()
         {
             InitializeComponent();
@@ -104,6 +106,8 @@ namespace TranslationFileEditor
 
         private void Textbox_TextChanged(object sender, EventArgs e)
         {
+            if (JustChangedKey) return;
+
             TextBox textbox = sender as TextBox;
             string file = TextBoxes.First(x => x.Value.Name == textbox.Name).Key;
 
@@ -114,7 +118,9 @@ namespace TranslationFileEditor
 
         private void lbKeys_SelectedIndexChanged(object sender, EventArgs e)
         {
+            JustChangedKey = true;
             UpdateTextBoxValues(lbKeys.SelectedValue.ToString());
+            JustChangedKey = false;
         }
 
         private void UpdateTextBoxValues(string key)
