@@ -20,7 +20,7 @@ namespace TranslationFileEditor
         private string OpenedFolder = null;
         string MainFile = null;
 
-        bool JustChangedKey = false;
+        bool HasUnsavedChanges = false;
 
         public Form1()
         {
@@ -106,21 +106,20 @@ namespace TranslationFileEditor
 
         private void Textbox_TextChanged(object sender, EventArgs e)
         {
-            if (JustChangedKey) return;
-
             TextBox textbox = sender as TextBox;
             string file = TextBoxes.First(x => x.Value.Name == textbox.Name).Key;
-
-            TranslationsData[file][lbKeys.SelectedValue.ToString()] = textbox.Text;
-
-            lblStatus.Text = "You have unsaved changes";
+            string oldValue = TranslationsData[file][lbKeys.SelectedValue.ToString()];
+            if (oldValue != textbox.Text)
+            {
+                TranslationsData[file][lbKeys.SelectedValue.ToString()] = textbox.Text;
+                HasUnsavedChanges = true;
+                lblStatus.Text = "You have unsaved changes";
+            }
         }
 
         private void lbKeys_SelectedIndexChanged(object sender, EventArgs e)
         {
-            JustChangedKey = true;
             UpdateTextBoxValues(lbKeys.SelectedValue.ToString());
-            JustChangedKey = false;
         }
 
         private void UpdateTextBoxValues(string key)
@@ -141,6 +140,7 @@ namespace TranslationFileEditor
             }
 
             lblStatus.Text = "Saved";
+            HasUnsavedChanges = false;
         }
 
         private void btnGithubProject_Click(object sender, EventArgs e)
