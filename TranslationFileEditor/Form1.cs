@@ -148,5 +148,27 @@ namespace TranslationFileEditor
             const string githubProjectUrl = "https://github.com/Trendays/TranslationFileEditor";
             System.Diagnostics.Process.Start(githubProjectUrl);
         }
+
+        private void lbKeys_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            string translationKey = lbKeys.Items[e.Index].ToString();
+
+            e.DrawBackground();
+            Graphics g = e.Graphics;
+
+            // draw the background color you want
+            // mine is set to olive, change it to whatever you want
+            if (TranslationsData.Any(file => !file.Value.ContainsKey(translationKey) || string.IsNullOrWhiteSpace(file.Value[translationKey])))
+            {
+                g.FillRectangle(new SolidBrush(Color.FromArgb(255, 220, 95)), e.Bounds);
+            }
+
+            // draw the text of the list item, not doing this will only show
+            // the background color
+            // you will need to get the text of item to display
+            g.DrawString(translationKey, e.Font, new SolidBrush(e.ForeColor), new PointF(e.Bounds.X, e.Bounds.Y));
+
+            e.DrawFocusRectangle();
+        }
     }
 }
