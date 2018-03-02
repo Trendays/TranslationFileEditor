@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TranslationFileEditor.Dto;
 
 namespace TranslationFileEditor
 {
@@ -62,11 +63,15 @@ namespace TranslationFileEditor
                 }
 
                 MainFile = files.First();
-                lbKeys.DataSource = TranslationsData[MainFile].Keys.OrderBy(x => x).ToList();
+                lbKeys.DataSource = TranslationsData[MainFile].Keys.OrderBy(x => x).Select(x => new TranslationKeyDto
+                {
+                    Key = x,
+                    IsMissingTranslation = TranslationsData.Any(file => !file.Value.ContainsKey(x) || string.IsNullOrWhiteSpace(file.Value[x]))
+                }).ToList();
                 lbKeys.Enabled = true;
 
                 InitTextBoxes();
-                UpdateTextBoxValues(lbKeys.SelectedValue.ToString());
+                UpdateTextBoxValues((lbKeys.SelectedValue as TranslationKeyDto).Key);
             }
         }
 
@@ -108,10 +113,14 @@ namespace TranslationFileEditor
         {
             TextBox textbox = sender as TextBox;
             string file = TextBoxes.First(x => x.Value.Name == textbox.Name).Key;
-            string oldValue = TranslationsData[file][lbKeys.SelectedValue.ToString()];
+
+            TranslationKeyDto selectedKeyDto = lbKeys.SelectedValue as TranslationKeyDto;
+
+            string oldValue = TranslationsData[file][selectedKeyDto.Key];
+
             if (oldValue != textbox.Text)
             {
-                TranslationsData[file][lbKeys.SelectedValue.ToString()] = textbox.Text;
+                TranslationsData[file][selectedKeyDto.Key] = textbox.Text;
                 HasUnsavedChanges = true;
                 lblStatus.Text = "You have unsaved changes";
             }
@@ -119,7 +128,8 @@ namespace TranslationFileEditor
 
         private void lbKeys_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateTextBoxValues(lbKeys.SelectedValue.ToString());
+            TranslationKeyDto selectedKeyDto = lbKeys.SelectedValue as TranslationKeyDto;
+            UpdateTextBoxValues(selectedKeyDto.Key);
         }
 
         private void UpdateTextBoxValues(string key)
@@ -151,22 +161,17 @@ namespace TranslationFileEditor
 
         private void lbKeys_DrawItem(object sender, DrawItemEventArgs e)
         {
-            string translationKey = lbKeys.Items[e.Index].ToString();
+            TranslationKeyDto keyDto = lbKeys.Items[e.Index] as TranslationKeyDto;
 
             e.DrawBackground();
             Graphics g = e.Graphics;
 
-            // draw the background color you want
-            // mine is set to olive, change it to whatever you want
-            if (TranslationsData.Any(file => !file.Value.ContainsKey(translationKey) || string.IsNullOrWhiteSpace(file.Value[translationKey])))
+            if (keyDto.IsMissingTranslation)
             {
                 g.FillRectangle(new SolidBrush(Color.FromArgb(255, 220, 95)), e.Bounds);
             }
 
-            // draw the text of the list item, not doing this will only show
-            // the background color
-            // you will need to get the text of item to display
-            g.DrawString(translationKey, e.Font, new SolidBrush(e.ForeColor), new PointF(e.Bounds.X, e.Bounds.Y));
+            g.DrawString(keyDto.Key, e.Font, new SolidBrush(e.ForeColor), new PointF(e.Bounds.X, e.Bounds.Y));
 
             e.DrawFocusRectangle();
         }
