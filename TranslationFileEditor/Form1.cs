@@ -68,11 +68,14 @@ namespace TranslationFileEditor
                 TranslationKeys = TranslationsData[MainFile].Keys.OrderBy(x => x).Select(x => new TranslationKeyDto
                 {
                     Key = x,
-                    IsMissingTranslation = IsKeyMissingTranslation(x)
+                    IsMissingTranslation = IsKeyMissingTranslation(x),
+                    IsVisible = true
                 }).ToList();
 
                 lbKeys.DataSource = TranslationKeys;
                 lbKeys.Enabled = true;
+
+                tbxKeyFilter.Enabled = true;
 
                 InitTextBoxes();
                 UpdateTextBoxValues((lbKeys.SelectedValue as TranslationKeyDto).Key);
@@ -204,12 +207,13 @@ namespace TranslationFileEditor
 
         private void btnNextMissing_Click(object sender, EventArgs e)
         {
+            List<TranslationKeyDto> visibleKeys = TranslationKeys.Where(x => x.IsVisible).ToList();
             int selectedIndex = lbKeys.SelectedIndex;
-            int nextIndex = TranslationKeys.FindIndex(selectedIndex + 1, x => (x as TranslationKeyDto).IsMissingTranslation);
+            int nextIndex = visibleKeys.FindIndex(selectedIndex + 1, x => (x as TranslationKeyDto).IsMissingTranslation);
 
             if(nextIndex == -1)
             {
-                nextIndex = TranslationKeys.FindIndex(0, selectedIndex, x => (x as TranslationKeyDto).IsMissingTranslation);
+                nextIndex = visibleKeys.FindIndex(0, selectedIndex, x => (x as TranslationKeyDto).IsMissingTranslation);
             }
 
             if(nextIndex == -1)
@@ -218,6 +222,15 @@ namespace TranslationFileEditor
             }
 
             lbKeys.SelectedIndex = nextIndex;
+        }
+
+        private void tbxKeyFilter_TextChanged(object sender, EventArgs e)
+        {
+            string filter = tbxKeyFilter.Text;
+
+            TranslationKeys.ForEach(key => key.IsVisible = string.IsNullOrWhiteSpace(filter) || key.Key.ToLowerInvariant().Contains(filter.ToLowerInvariant()));
+
+            lbKeys.DataSource = TranslationKeys.Where(x => x.IsVisible).ToList();
         }
     }
 }

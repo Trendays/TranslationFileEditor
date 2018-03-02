@@ -35,6 +35,8 @@
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnSaveChanges = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnNextMissing = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnGithubProject = new System.Windows.Forms.ToolStripMenuItem();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
@@ -45,8 +47,8 @@
             this.tlpTranslations = new System.Windows.Forms.TableLayoutPanel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnNextMissing = new System.Windows.Forms.ToolStripMenuItem();
+            this.label2 = new System.Windows.Forms.Label();
+            this.tbxKeyFilter = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -98,6 +100,22 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnNextMissing});
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
+            this.editToolStripMenuItem.Text = "Edit";
+            // 
+            // btnNextMissing
+            // 
+            this.btnNextMissing.Name = "btnNextMissing";
+            this.btnNextMissing.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this.btnNextMissing.Size = new System.Drawing.Size(222, 22);
+            this.btnNextMissing.Text = "Next Missing Translation";
+            this.btnNextMissing.Click += new System.EventHandler(this.btnNextMissing_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -140,9 +158,9 @@
             this.lbKeys.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.lbKeys.Enabled = false;
             this.lbKeys.FormattingEnabled = true;
-            this.lbKeys.Location = new System.Drawing.Point(16, 66);
+            this.lbKeys.Location = new System.Drawing.Point(16, 92);
             this.lbKeys.Name = "lbKeys";
-            this.lbKeys.Size = new System.Drawing.Size(357, 459);
+            this.lbKeys.Size = new System.Drawing.Size(357, 433);
             this.lbKeys.TabIndex = 3;
             this.lbKeys.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lbKeys_DrawItem);
             this.lbKeys.SelectedIndexChanged += new System.EventHandler(this.lbKeys_SelectedIndexChanged);
@@ -183,27 +201,31 @@
             this.lblStatus.Size = new System.Drawing.Size(118, 17);
             this.lblStatus.Text = "toolStripStatusLabel1";
             // 
-            // editToolStripMenuItem
+            // label2
             // 
-            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnNextMissing});
-            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
-            this.editToolStripMenuItem.Text = "Edit";
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(13, 66);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(38, 13);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "Filter : ";
             // 
-            // btnNextMissing
+            // tbxKeyFilter
             // 
-            this.btnNextMissing.Name = "btnNextMissing";
-            this.btnNextMissing.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.btnNextMissing.Size = new System.Drawing.Size(222, 22);
-            this.btnNextMissing.Text = "Next Missing Translation";
-            this.btnNextMissing.Click += new System.EventHandler(this.btnNextMissing_Click);
+            this.tbxKeyFilter.Enabled = false;
+            this.tbxKeyFilter.Location = new System.Drawing.Point(47, 66);
+            this.tbxKeyFilter.Name = "tbxKeyFilter";
+            this.tbxKeyFilter.Size = new System.Drawing.Size(327, 20);
+            this.tbxKeyFilter.TabIndex = 9;
+            this.tbxKeyFilter.TextChanged += new System.EventHandler(this.tbxKeyFilter_TextChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(727, 555);
+            this.Controls.Add(this.tbxKeyFilter);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tlpTranslations);
             this.Controls.Add(this.lbKeys);
@@ -242,6 +264,8 @@
         private System.Windows.Forms.ToolStripMenuItem btnGithubProject;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem btnNextMissing;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox tbxKeyFilter;
     }
 }
 

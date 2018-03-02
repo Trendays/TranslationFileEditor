@@ -9,6 +9,7 @@ namespace TranslationFileEditor.Dto
     public class TranslationKeyDto
     {
         public string Key { get; set; }
+        public bool IsVisible { get; set; }
         public bool IsMissingTranslation { get; set; }
     }
 }
