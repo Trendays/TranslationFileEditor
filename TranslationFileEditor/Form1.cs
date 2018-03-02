@@ -18,6 +18,7 @@ namespace TranslationFileEditor
     {
         private Dictionary<string, Dictionary<string, string>> TranslationsData = new Dictionary<string, Dictionary<string, string>>();
         private Dictionary<string, TextBox> TextBoxes = new Dictionary<string, TextBox>();
+        private List<TranslationKeyDto> TranslationKeys;
         private string OpenedFolder = null;
         string MainFile = null;
 
@@ -63,16 +64,24 @@ namespace TranslationFileEditor
                 }
 
                 MainFile = files.First();
-                lbKeys.DataSource = TranslationsData[MainFile].Keys.OrderBy(x => x).Select(x => new TranslationKeyDto
+
+                TranslationKeys = TranslationsData[MainFile].Keys.OrderBy(x => x).Select(x => new TranslationKeyDto
                 {
                     Key = x,
-                    IsMissingTranslation = TranslationsData.Any(file => !file.Value.ContainsKey(x) || string.IsNullOrWhiteSpace(file.Value[x]))
+                    IsMissingTranslation = IsKeyMissingTranslation(x)
                 }).ToList();
+
+                lbKeys.DataSource = TranslationKeys;
                 lbKeys.Enabled = true;
 
                 InitTextBoxes();
                 UpdateTextBoxValues((lbKeys.SelectedValue as TranslationKeyDto).Key);
             }
+        }
+
+        private bool IsKeyMissingTranslation(string key)
+        {
+            return TranslationsData.Any(file => !file.Value.ContainsKey(key) || string.IsNullOrWhiteSpace(file.Value[key]));
         }
 
         private void InitTextBoxes()
@@ -115,14 +124,24 @@ namespace TranslationFileEditor
             string file = TextBoxes.First(x => x.Value.Name == textbox.Name).Key;
 
             TranslationKeyDto selectedKeyDto = lbKeys.SelectedValue as TranslationKeyDto;
+            bool keyExists = TranslationsData[file].ContainsKey(selectedKeyDto.Key);
 
-            string oldValue = TranslationsData[file][selectedKeyDto.Key];
+            string oldValue = keyExists ? TranslationsData[file][selectedKeyDto.Key] : string.Empty;
 
             if (oldValue != textbox.Text)
             {
-                TranslationsData[file][selectedKeyDto.Key] = textbox.Text;
+                if (keyExists)
+                {
+                    TranslationsData[file][selectedKeyDto.Key] = textbox.Text;
+                }
+                else
+                {
+                    TranslationsData[file].Add(selectedKeyDto.Key, textbox.Text);
+                }
+
                 HasUnsavedChanges = true;
                 lblStatus.Text = "You have unsaved changes";
+                selectedKeyDto.IsMissingTranslation = IsKeyMissingTranslation(selectedKeyDto.Key);
             }
         }
 
@@ -136,7 +155,14 @@ namespace TranslationFileEditor
         {
             foreach (KeyValuePair<string, TextBox> pair in TextBoxes)
             {
-                pair.Value.Text = TranslationsData[pair.Key][key];
+                if (TranslationsData[pair.Key].ContainsKey(key))
+                {
+                    pair.Value.Text = TranslationsData[pair.Key][key];
+                }
+                else
+                {
+                    pair.Value.Text = string.Empty;
+                }
             }
         }
 
@@ -174,6 +200,24 @@ namespace TranslationFileEditor
             g.DrawString(keyDto.Key, e.Font, new SolidBrush(e.ForeColor), new PointF(e.Bounds.X, e.Bounds.Y));
 
             e.DrawFocusRectangle();
+        }
+
+        private void btnNextMissing_Click(object sender, EventArgs e)
+        {
+            int selectedIndex = lbKeys.SelectedIndex;
+            int nextIndex = TranslationKeys.FindIndex(selectedIndex + 1, x => (x as TranslationKeyDto).IsMissingTranslation);
+
+            if(nextIndex == -1)
+            {
+                nextIndex = TranslationKeys.FindIndex(0, selectedIndex, x => (x as TranslationKeyDto).IsMissingTranslation);
+            }
+
+            if(nextIndex == -1)
+            {
+                nextIndex = selectedIndex;
+            }
+
+            lbKeys.SelectedIndex = nextIndex;
         }
     }
 }
