@@ -110,6 +110,7 @@
             // 
             // btnNextMissing
             // 
+            this.btnNextMissing.Enabled = false;
             this.btnNextMissing.Name = "btnNextMissing";
             this.btnNextMissing.ShortcutKeys = System.Windows.Forms.Keys.F3;
             this.btnNextMissing.Size = new System.Drawing.Size(222, 22);

@@ -20,9 +20,9 @@ namespace TranslationFileEditor
         private Dictionary<string, TextBox> TextBoxes = new Dictionary<string, TextBox>();
         private List<TranslationKeyDto> TranslationKeys;
         private string OpenedFolder = null;
-        string MainFile = null;
+        private string MainFile = null;
 
-        bool HasUnsavedChanges = false;
+        private bool HasUnsavedChanges = false;
 
         public Form1()
         {
@@ -76,6 +76,7 @@ namespace TranslationFileEditor
                 lbKeys.Enabled = true;
 
                 tbxKeyFilter.Enabled = true;
+                btnNextMissing.Enabled = true;
 
                 InitTextBoxes();
                 UpdateTextBoxValues((lbKeys.SelectedValue as TranslationKeyDto).Key);
