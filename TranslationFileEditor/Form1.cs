@@ -212,12 +212,12 @@ namespace TranslationFileEditor
             int selectedIndex = lbKeys.SelectedIndex;
             int nextIndex = visibleKeys.FindIndex(selectedIndex + 1, x => (x as TranslationKeyDto).IsMissingTranslation);
 
-            if(nextIndex == -1)
+            if (nextIndex == -1)
             {
                 nextIndex = visibleKeys.FindIndex(0, selectedIndex, x => (x as TranslationKeyDto).IsMissingTranslation);
             }
 
-            if(nextIndex == -1)
+            if (nextIndex == -1)
             {
                 nextIndex = selectedIndex;
             }
@@ -232,6 +232,19 @@ namespace TranslationFileEditor
             TranslationKeys.ForEach(key => key.IsVisible = string.IsNullOrWhiteSpace(filter) || key.Key.ToLowerInvariant().Contains(filter.ToLowerInvariant()));
 
             lbKeys.DataSource = TranslationKeys.Where(x => x.IsVisible).ToList();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (HasUnsavedChanges)
+            {
+                DialogResult result = MessageBox.Show("You have unsaved changes, do you want to exit without saving ?", "Exit without saving ?", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.No)
+                {
+                    e.Cancel = true;
+                }
+            }
         }
     }
 }
