@@ -39,7 +39,6 @@
             this.btnNextMissing = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnGithubProject = new System.Windows.Forms.ToolStripMenuItem();
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.cbMainLanguageSelector = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.lbKeys = new System.Windows.Forms.ListBox();
@@ -131,10 +130,6 @@
             this.btnGithubProject.Size = new System.Drawing.Size(150, 22);
             this.btnGithubProject.Text = "Github Project";
             this.btnGithubProject.Click += new System.EventHandler(this.btnGithubProject_Click);
-            // 
-            // folderBrowserDialog1
-            // 
-            this.folderBrowserDialog1.SelectedPath = "C:\\Users\\Maxime\\Source\\Repos\\Trendays\\Trendays.Web\\src\\assets\\languages";
             // 
             // cbMainLanguageSelector
             // 
@@ -253,7 +248,6 @@
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.ComboBox cbMainLanguageSelector;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ListBox lbKeys;

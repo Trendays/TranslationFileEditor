@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -38,9 +39,12 @@ namespace TranslationFileEditor
 
         private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            CommonOpenFileDialog fileDialog = new CommonOpenFileDialog();
+            fileDialog.IsFolderPicker = true;
+            
+            if (fileDialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                string directory = folderBrowserDialog1.SelectedPath;
+                string directory = fileDialog.FileName;
 
                 OpenedFolder = directory;
                 btnSaveChanges.Enabled = true;
@@ -176,7 +180,8 @@ namespace TranslationFileEditor
 
             foreach (KeyValuePair<string, Dictionary<string, string>> file in TranslationsData)
             {
-                File.WriteAllText($"{OpenedFolder}/{file.Key}", JsonConvert.SerializeObject(file.Value.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value), Formatting.Indented));
+                Dictionary<string, string> orderedDictionary = file.Value.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
+                File.WriteAllText($"{OpenedFolder}/{file.Key}", JsonConvert.SerializeObject(orderedDictionary, Formatting.Indented));
             }
 
             lblStatus.Text = "Saved";
