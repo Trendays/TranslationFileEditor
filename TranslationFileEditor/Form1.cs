@@ -176,7 +176,7 @@ namespace TranslationFileEditor
 
             foreach (KeyValuePair<string, Dictionary<string, string>> file in TranslationsData)
             {
-                File.WriteAllText($"{OpenedFolder}/{file.Key}", JsonConvert.SerializeObject(file.Value, Formatting.Indented));
+                File.WriteAllText($"{OpenedFolder}/{file.Key}", JsonConvert.SerializeObject(file.Value.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value), Formatting.Indented));
             }
 
             lblStatus.Text = "Saved";
