@@ -1,4 +1,6 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
+﻿using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Translation.V2;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -25,12 +27,14 @@ namespace TranslationFileEditor
         private string MainFile = null;
 
         private RecentlyOpenedFolderService RecentlyOpenedFolderService { get; set; }
+        private GoogleTranslationService GoogleTranslationService { get; set; }
 
         private bool HasUnsavedChanges = false;
 
         public Form1()
         {
             RecentlyOpenedFolderService = new RecentlyOpenedFolderService();
+            GoogleTranslationService = new GoogleTranslationService();
 
             InitializeComponent();
 
@@ -152,12 +156,31 @@ namespace TranslationFileEditor
 
                 textbox.TextChanged += Textbox_TextChanged;
 
+                Button translateButton = new Button()
+                {
+                    Text = "Translate",
+                    Top = 80,
+                    Left = 20,
+                };
+
+                translateButton.Click += new EventHandler((sender, args) => TranslateMessage(file));
+
                 group.Controls.Add(textbox);
+                group.Controls.Add(translateButton);
                 TextBoxes[file] = textbox;
 
                 tlpTranslations.Controls.Add(group, 0, rowIndex);
+                translateButton.BringToFront();
                 rowIndex++;
             }
+        }
+
+        private void TranslateMessage(string targetLanguage)
+        {
+            string key = (lbKeys.SelectedValue as TranslationKeyDto).Key;
+            string sourceMessage = TextBoxes[MainFile].Text;
+            TextBox targetTextbox = TextBoxes[targetLanguage];
+            targetTextbox.Text = GoogleTranslationService.Translate(sourceMessage, MainFile.Split('.')[0], targetLanguage.Split('.')[0]);
         }
 
         private void Textbox_TextChanged(object sender, EventArgs e)
