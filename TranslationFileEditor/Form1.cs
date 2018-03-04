@@ -73,12 +73,18 @@ namespace TranslationFileEditor
 
         private void OpenFolder(string path)
         {
+            IEnumerable<string> files = Directory.EnumerateFiles(path, "*.json").Select(x => Path.GetFileName(x));
+
+            if (!files.Any())
+            {
+                MessageBox.Show("There is no .json file in this folder", "Invalid folder", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             RecentlyOpenedFolderService.AddFolder(path);
 
             OpenedFolder = path;
             btnSaveChanges.Enabled = true;
-
-            IEnumerable<string> files = Directory.EnumerateFiles(path, "*.json").Select(x => Path.GetFileName(x));
 
             cbMainLanguageSelector.DataSource = files.ToList();
             cbMainLanguageSelector.Enabled = true;
