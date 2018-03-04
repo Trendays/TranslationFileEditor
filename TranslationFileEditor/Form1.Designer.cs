@@ -160,6 +160,8 @@
             // 
             // lbKeys
             // 
+            this.lbKeys.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.lbKeys.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.lbKeys.Enabled = false;
             this.lbKeys.FormattingEnabled = true;
@@ -177,6 +179,8 @@
             // 
             // tlpTranslations
             // 
+            this.tlpTranslations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tlpTranslations.AutoSize = true;
             this.tlpTranslations.ColumnCount = 1;
             this.tlpTranslations.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -197,6 +201,7 @@
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.statusStrip1.Size = new System.Drawing.Size(727, 22);
+            this.statusStrip1.SizingGrip = false;
             this.statusStrip1.TabIndex = 7;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -239,6 +244,7 @@
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
+            this.MinimumSize = new System.Drawing.Size(743, 400);
             this.Name = "Form1";
             this.Text = "Translation File Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
