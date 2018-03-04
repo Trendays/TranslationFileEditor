@@ -210,6 +210,11 @@ namespace TranslationFileEditor
 
         private void btnSaveChanges_Click(object sender, EventArgs e)
         {
+            SaveChanges();
+        }
+
+        private void SaveChanges()
+        {
             lblStatus.Text = "Saving...";
 
             foreach (KeyValuePair<string, Dictionary<string, string>> file in TranslationsData)
@@ -277,11 +282,15 @@ namespace TranslationFileEditor
         {
             if (HasUnsavedChanges)
             {
-                DialogResult result = MessageBox.Show("You have unsaved changes, do you want to exit without saving ?", "Exit without saving ?", MessageBoxButtons.YesNo);
+                DialogResult result = MessageBox.Show("You have unsaved changes, do you want to save them before exiting ?", "Save changes ?", MessageBoxButtons.YesNoCancel);
 
-                if (result == DialogResult.No)
+                if (result == DialogResult.Cancel)
                 {
                     e.Cancel = true;
+                }
+                else if(result == DialogResult.Yes)
+                {
+                    SaveChanges();
                 }
             }
         }
