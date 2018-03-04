@@ -34,6 +34,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnSaveChanges = new System.Windows.Forms.ToolStripMenuItem();
+            this.recentlyOpenedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnNextMissing = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,6 +70,7 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openFolderToolStripMenuItem,
             this.btnSaveChanges,
+            this.recentlyOpenedToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -90,6 +92,13 @@
             this.btnSaveChanges.Size = new System.Drawing.Size(187, 22);
             this.btnSaveChanges.Text = "Save Changes";
             this.btnSaveChanges.Click += new System.EventHandler(this.btnSaveChanges_Click);
+            // 
+            // recentlyOpenedToolStripMenuItem
+            // 
+            this.recentlyOpenedToolStripMenuItem.Enabled = false;
+            this.recentlyOpenedToolStripMenuItem.Name = "recentlyOpenedToolStripMenuItem";
+            this.recentlyOpenedToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.recentlyOpenedToolStripMenuItem.Text = "Recent Folders";
             // 
             // exitToolStripMenuItem
             // 
@@ -262,6 +271,7 @@
         private System.Windows.Forms.ToolStripMenuItem btnNextMissing;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbxKeyFilter;
+        private System.Windows.Forms.ToolStripMenuItem recentlyOpenedToolStripMenuItem;
     }
 }
 

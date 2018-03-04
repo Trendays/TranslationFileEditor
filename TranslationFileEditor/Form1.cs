@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TranslationFileEditor.Dto;
+using TranslationFileEditor.Services;
 
 namespace TranslationFileEditor
 {
@@ -23,15 +24,35 @@ namespace TranslationFileEditor
         private string OpenedFolder = null;
         private string MainFile = null;
 
+        private RecentlyOpenedFolderService RecentlyOpenedFolderService { get; set; }
+
         private bool HasUnsavedChanges = false;
 
         public Form1()
         {
+            RecentlyOpenedFolderService = new RecentlyOpenedFolderService();
+
             InitializeComponent();
+
+            LoadRecentlyOpenedFolders();
 
             lblStatus.Text = string.Empty;
         }
 
+        private void LoadRecentlyOpenedFolders()
+        {
+            List<string> recentlyOpenedFolders = RecentlyOpenedFolderService.GetFolders();
+
+            foreach (string path in recentlyOpenedFolders)
+            {
+                ToolStripItem btn = recentlyOpenedToolStripMenuItem.DropDownItems.Add(RecentlyOpenedFolderService.CompressFolderPath(path));
+                btn.Click += new EventHandler((sender, args) => OpenFolder(path));
+                btn.ToolTipText = path;
+            }
+
+            recentlyOpenedToolStripMenuItem.Enabled = true;
+        }
+        
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -41,50 +62,57 @@ namespace TranslationFileEditor
         {
             CommonOpenFileDialog fileDialog = new CommonOpenFileDialog();
             fileDialog.IsFolderPicker = true;
-            
+
             if (fileDialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
                 string directory = fileDialog.FileName;
 
-                OpenedFolder = directory;
-                btnSaveChanges.Enabled = true;
+                OpenFolder(directory);
+            }
+        }
 
-                IEnumerable<string> files = Directory.EnumerateFiles(directory, "*.json").Select(x => Path.GetFileName(x));
+        private void OpenFolder(string path)
+        {
+            RecentlyOpenedFolderService.AddFolder(path);
 
-                cbMainLanguageSelector.DataSource = files.ToList();
-                cbMainLanguageSelector.Enabled = true;
+            OpenedFolder = path;
+            btnSaveChanges.Enabled = true;
 
-                foreach (string file in files)
+            IEnumerable<string> files = Directory.EnumerateFiles(path, "*.json").Select(x => Path.GetFileName(x));
+
+            cbMainLanguageSelector.DataSource = files.ToList();
+            cbMainLanguageSelector.Enabled = true;
+
+            foreach (string file in files)
+            {
+                JObject obj = JObject.Parse(File.ReadAllText(path + "/" + file));
+                Dictionary<string, string> translations = new Dictionary<string, string>();
+
+                foreach (KeyValuePair<string, JToken> item in obj)
                 {
-                    JObject obj = JObject.Parse(File.ReadAllText(directory + "/" + file));
-                    Dictionary<string, string> translations = new Dictionary<string, string>();
-
-                    foreach (KeyValuePair<string, JToken> item in obj)
-                    {
-                        translations.Add(item.Key, item.Value.ToString());
-                    }
-
-                    TranslationsData.Add(file, translations);
+                    translations.Add(item.Key, item.Value.ToString());
                 }
 
-                MainFile = files.First();
-
-                TranslationKeys = TranslationsData[MainFile].Keys.OrderBy(x => x).Select(x => new TranslationKeyDto
-                {
-                    Key = x,
-                    IsMissingTranslation = IsKeyMissingTranslation(x),
-                    IsVisible = true
-                }).ToList();
-
-                lbKeys.DataSource = TranslationKeys;
-                lbKeys.Enabled = true;
-
-                tbxKeyFilter.Enabled = true;
-                btnNextMissing.Enabled = true;
-
-                InitTextBoxes();
-                UpdateTextBoxValues((lbKeys.SelectedValue as TranslationKeyDto).Key);
+                TranslationsData.Add(file, translations);
             }
+
+            MainFile = files.First();
+
+            TranslationKeys = TranslationsData[MainFile].Keys.OrderBy(x => x).Select(x => new TranslationKeyDto
+            {
+                Key = x,
+                IsMissingTranslation = IsKeyMissingTranslation(x),
+                IsVisible = true
+            }).ToList();
+
+            lbKeys.DataSource = TranslationKeys;
+            lbKeys.Enabled = true;
+
+            tbxKeyFilter.Enabled = true;
+            btnNextMissing.Enabled = true;
+
+            InitTextBoxes();
+            UpdateTextBoxValues((lbKeys.SelectedValue as TranslationKeyDto).Key);
         }
 
         private bool IsKeyMissingTranslation(string key)
