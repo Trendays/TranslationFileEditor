@@ -52,7 +52,7 @@ namespace TranslationFileEditor
 
             recentlyOpenedToolStripMenuItem.Enabled = true;
         }
-        
+
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -219,7 +219,18 @@ namespace TranslationFileEditor
 
             foreach (KeyValuePair<string, Dictionary<string, string>> file in TranslationsData)
             {
-                Dictionary<string, string> orderedDictionary = file.Value.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
+                Dictionary<string, string> fileKeyValues;
+
+                if (file.Key != MainFile)
+                {
+                    fileKeyValues = file.Value.Where(x => TranslationsData[MainFile].ContainsKey(x.Key)).ToDictionary(x => x.Key, x => x.Value);
+                }
+                else
+                {
+                    fileKeyValues = file.Value;
+                }
+
+                Dictionary<string, string> orderedDictionary = fileKeyValues.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
                 File.WriteAllText($"{OpenedFolder}/{file.Key}", JsonConvert.SerializeObject(orderedDictionary, Formatting.Indented));
             }
 
@@ -288,7 +299,7 @@ namespace TranslationFileEditor
                 {
                     e.Cancel = true;
                 }
-                else if(result == DialogResult.Yes)
+                else if (result == DialogResult.Yes)
                 {
                     SaveChanges();
                 }
